@@ -1,29 +1,25 @@
 import './style.css';
 import p5 from 'p5';
-import { Eye } from './Eye';
 import { CirclePacker } from './CirclePacker';
-import { SKETCH_HEIGHT, SKETCH_PADDING, SKETCH_WIDTH } from './constants';
+import { SKETCH_HEIGHT, SKETCH_WIDTH } from './constants';
+import { Eye } from './Eye';
 import { packShapes } from './packShapes';
 import type { GridCircle } from './types';
-
-const eyes: Eye[] = [];
 
 export const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(SKETCH_WIDTH, SKETCH_HEIGHT);
 
-    const circlePacker = new CirclePacker(p, SKETCH_PADDING, 200, 5);
+    const circlePacker = new CirclePacker(p, 200, 16);
 
-    const spawn = () =>
-      new Eye(p, p.createVector(p.width / 2, p.height / 2), 50);
+    const spawn = (x: number, y: number, d: number, rotation: number) =>
+      new Eye(p, x, y, d, rotation);
 
     const { eyes, allCircles } = packShapes(p, circlePacker, spawn);
-    console.log(allCircles);
 
     p.background(255);
-    p.translate(SKETCH_PADDING, SKETCH_PADDING);
 
-    drawCircles(p, allCircles);
+    // drawCircles(p, allCircles);
 
     eyes.forEach((eye) => {
       eye.draw();
@@ -49,7 +45,7 @@ if (appDiv) {
 
 function drawCircles(p: p5, circles: GridCircle[]) {
   for (let n = 0; n < circles.length; n++) {
-    let i = circles[n];
+    const i = circles[n];
     p.push();
     p.noFill();
     p.stroke(0, 200, 100);

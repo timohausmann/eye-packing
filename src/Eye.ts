@@ -17,14 +17,14 @@ export class Eye {
   blueprint: GridCircle[] = [];
   circles: GridCircle[] = [];
 
-  constructor(p: p5, position: p5.Vector, d: number) {
+  constructor(p: p5, x: number, y: number, d: number, rotation: number) {
     this.p = p;
     this.d = d;
     this.w = d * 1.1682;
 
-    this.position = position;
+    this.position = p.createVector(x, y);
     this.scale = 1;
-    this.rotation = 0;
+    this.rotation = rotation;
 
     this.eyeBallRadius = this.w * 4 * p.random(0.94, 0.96);
     this.pupilOffset = p5.Vector.random2D().mult(p.random(4, 28));
@@ -34,9 +34,13 @@ export class Eye {
   }
 
   draw = () => {
-    const { w, d, p } = this;
+    const { w, d, p, scale, rotation, position } = this;
+    const drawW = w * scale;
+    const drawD = d * scale;
+
     p.push();
-    p.translate(this.position.x, this.position.y);
+    p.translate(position.x, position.y);
+    p.rotate(rotation);
 
     p.noFill();
     p.stroke(0);
@@ -46,15 +50,15 @@ export class Eye {
     p.clip(this.drawEyeLines);
 
     // eye ball
-    p.push();
+    //p.push();
     //p.translate(w);
-    p.circle(-w, -12, this.eyeBallRadius);
-    p.pop();
+    //p.circle(-drawW, -12, this.eyeBallRadius);
+    //p.pop();
 
     // draw actual pupil
     p.push();
     p.translate(this.pupilOffset.x, this.pupilOffset.y);
-    p.circle(0, 0, this.pupilRadius);
+    p.circle(0, 0, this.pupilRadius * scale);
     p.pop();
 
     // end mask
@@ -67,20 +71,40 @@ export class Eye {
   };
 
   drawEyeLines = () => {
-    const { w, d, p } = this;
+    const { w, d, p, scale } = this;
+    const drawW = w * scale;
+    const drawD = d * scale;
 
-    p.bezier(-w, 0, -w / 2, -d * 0.67, w / 2, -d * 0.67, w, 0);
-    p.bezier(-w, 0, -w / 2, d * 0.67, w / 2, d * 0.67, w, 0);
+    p.bezier(
+      -drawW,
+      0,
+      -drawW / 2,
+      -drawD * 0.67,
+      drawW / 2,
+      -drawD * 0.67,
+      drawW,
+      0,
+    );
+    p.bezier(
+      -drawW,
+      0,
+      -drawW / 2,
+      drawD * 0.67,
+      drawW / 2,
+      drawD * 0.67,
+      drawW,
+      0,
+    );
   };
 
   createBlueprint = () => {
-    const { d, p, w } = this;
-    const resolution = 1;
+    const { w, d, p } = this;
+    const resolution = 7;
 
     this.blueprint = new Array(resolution).fill(0).map((_, i) => ({
-      x: 0, //p.map(i, 0, resolution, -w, w),
+      x: p.map(i, 0, resolution - 1, -w, w),
       y: 0,
-      r: d / 2,
+      r: (d / 2) * (1 - Math.abs(p.map(i, 0, resolution - 1, -1, 1)) ** 2),
     }));
   };
 

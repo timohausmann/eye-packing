@@ -4,6 +4,7 @@
  */
 
 import type p5 from 'p5';
+import { SKETCH_PADDING } from './constants';
 import type { GridCircle, GridItem } from './types';
 
 export class CirclePacker {
@@ -21,16 +22,11 @@ export class CirclePacker {
   grid: GridItem[][] = [];
   items: GridCircle[] = [];
 
-  constructor(
-    p: p5,
-    canvasPadding: number,
-    gridDivs: number,
-    minDistance: number,
-  ) {
+  constructor(p: p5, gridDivs: number, minDistance: number) {
     this.p = p;
 
-    this.width = p.width - canvasPadding * 2;
-    this.height = p.height - canvasPadding * 2;
+    this.width = p.width;
+    this.height = p.height;
 
     this.gridDivs = gridDivs;
     this.pad = minDistance;
@@ -141,10 +137,10 @@ export class CirclePacker {
   addCircle = (c: GridCircle): GridCircle | null => {
     // break early if out of grid
     if (
-      c.x - c.r < 0 ||
-      c.x + c.r > this.width ||
-      c.y - c.r < 0 ||
-      c.y + c.r > this.height
+      c.x - c.r < SKETCH_PADDING ||
+      c.x + c.r > this.width - SKETCH_PADDING ||
+      c.y - c.r < SKETCH_PADDING ||
+      c.y + c.r > this.height - SKETCH_PADDING
     ) {
       return null;
     }
@@ -184,10 +180,10 @@ export class CirclePacker {
     while (true) {
       // break early if out of grid
       if (
-        c1.x - c1.r < 0 ||
-        c1.x + c1.r > this.width ||
-        c1.y - c1.r < 0 ||
-        c1.y + c1.r > this.height
+        c1.x - c1.r < SKETCH_PADDING ||
+        c1.x + c1.r > this.width - SKETCH_PADDING ||
+        c1.y - c1.r < SKETCH_PADDING ||
+        c1.y + c1.r > this.height - SKETCH_PADDING
       ) {
         return null;
       }
